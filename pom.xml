@@ -12,7 +12,7 @@
     <artifactId>drools-poc-v2</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>drools-poc-v2</name>
-    <description>drools-poc-v2</description>
+     <description>Drools template validation POC</description>
     <url/>
     <licenses>
         <license/>
@@ -28,6 +28,7 @@
     </scm>
     <properties>
         <java.version>21</java.version>
+        <drools.version>8.44.0.Final</drools.version>
     </properties>
     <dependencies>
         <dependency>
@@ -38,7 +39,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
@@ -53,6 +53,37 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <!-- Drools Dependencies -->
+        <dependency>
+            <groupId>org.drools</groupId>
+            <artifactId>drools-core</artifactId>
+            <version>${drools.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.drools</groupId>
+            <artifactId>drools-compiler</artifactId>
+            <version>${drools.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.drools</groupId>
+            <artifactId>drools-templates</artifactId>
+            <version>${drools.version}</version>
+        </dependency>
+
+        <!-- For API Documentation -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.2.0</version>
+        </dependency>
+
+        <!-- H2 for testing -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
 
@@ -84,5 +115,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
