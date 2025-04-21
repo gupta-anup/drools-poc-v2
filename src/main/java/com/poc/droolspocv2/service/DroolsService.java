@@ -8,7 +8,6 @@ import com.poc.droolspocv2.repository.DroolsTemplateRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.drools.template.ObjectDataCompiler;
 import org.kie.api.KieServices;
 import org.kie.api.builder.KieBuilder;
 import org.kie.api.builder.KieFileSystem;
@@ -108,7 +107,7 @@ public class DroolsService {
     private KieSession buildKieSessionFromDrl(String drl) {
         log.debug("Building KieSession from DRL");
         KieFileSystem kfs = kieServices.newKieFileSystem();
-        kfs.write("src/main/resources/rules/generated.drl", drl);
+        kfs.write("rules/generated.drl", drl);
 
         KieBuilder kieBuilder = kieServices.newKieBuilder(kfs).buildAll();
         if (kieBuilder.getResults().hasMessages()) {
