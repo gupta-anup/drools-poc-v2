@@ -8,7 +8,7 @@ import com.poc.droolspocv2.repository.DroolsTemplateRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-// import org.drools.template.ObjectDataCompiler;
+import org.drools.template.ObjectDataCompiler;
 import org.kie.api.KieServices;
 import org.kie.api.builder.KieBuilder;
 import org.kie.api.builder.KieFileSystem;
