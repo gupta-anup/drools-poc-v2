@@ -49,8 +49,6 @@ public class DataLoader {
                         .validationType("ONLY_NAME")
                         .description("Validates only the name field")
                         .drlTemplate("""
-                    package com.poc.droolsvalidation;
-                    
                     import com.poc.droolspocv2.model.AccountValidationData;
                     import com.poc.droolspocv2.model.ValidationResult;
                     
@@ -72,8 +70,6 @@ public class DataLoader {
                         .validationType("NAME_AND_AGE")
                         .description("Validates both name and age fields")
                         .drlTemplate("""
-                    package com.poc.droolsvalidation;
-                    
                     import com.poc.droolspocv2.model.AccountValidationData;
                     import com.poc.droolspocv2.model.ValidationResult;
                     
@@ -107,8 +103,6 @@ public class DataLoader {
                         .validationType("ALL_FIELDS")
                         .description("Validates all fields: name, age, and DOB")
                         .drlTemplate("""
-                    package com.poc.droolsvalidation;
-                    
                     import com.poc.droolspocv2.model.AccountValidationData;
                     import com.poc.droolspocv2.model.ValidationResult;
                     import java.time.LocalDate;
@@ -155,8 +149,6 @@ public class DataLoader {
                         .validationType("ONLY_DOB")
                         .description("Validates only the DOB field")
                         .drlTemplate("""
-                    package com.poc.droolsvalidation;
-                    
                     import com.poc.droolspocv2.model.AccountValidationData;
                     import com.poc.droolspocv2.model.ValidationResult;
                     import java.time.LocalDate;
