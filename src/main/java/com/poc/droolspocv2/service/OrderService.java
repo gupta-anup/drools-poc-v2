@@ -30,15 +30,15 @@ public class OrderService {
 
     @Transactional
     public Order placeOrder(OrderRequest orderRequest) {
-        // Find customer data
-        Optional<AccountValidationData> customerOpt = accountRepository.findByAccountId(orderRequest.getAccountId());
-        if (customerOpt.isEmpty()) {
+        // Find customer data from database
+        Optional<AccountValidationData> customerDataOpt = accountRepository.findByAccountId(orderRequest.getAccountId());
+        if (customerDataOpt.isEmpty()) {
             Order rejectedOrder = Order.builder()
                     .accountId(orderRequest.getAccountId())
                     .orderDate(LocalDateTime.now())
                     .totalAmount(orderRequest.getTotalAmount())
                     .status("REJECTED")
-                    .rejectionReason("Customer not found")
+                    .rejectionReason("Customer not found in database")
                     .build();
             return orderRepository.save(rejectedOrder);
         }
@@ -56,10 +56,16 @@ public class OrderService {
             return orderRepository.save(rejectedOrder);
         }
 
-        // Validate customer
-        AccountValidationData customer = customerOpt.get();
+        // Validate order request against stored customer data
+        AccountValidationData storedCustomer = customerDataOpt.get();
         DroolsTemplate template = templateOpt.get();
-        ValidationResult validationResult = droolsService.validateCustomer(customer, template.getDrlTemplate());
+
+        // Pass both request data and stored data to the validation service
+        ValidationResult validationResult = droolsService.validateOrder(
+                orderRequest,
+                storedCustomer,
+                template.getDrlTemplate()
+        );
 
         // Create and save order with validation result
         Order order = Order.builder()
