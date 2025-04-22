@@ -1,53 +1,80 @@
-// package com.poc.droolspocv2.service;
+package com.poc.droolspocv2.service;
 
-// import com.poc.droolspocv2.dto.OrderRequest;
-// import com.poc.droolspocv2.model.AccountValidationData;
-// import com.poc.droolspocv2.model.Order;
-// import com.poc.droolspocv2.model.ValidationResult;
-// import com.poc.droolspocv2.repository.AccountValidationDataRepository;
-// import com.poc.droolspocv2.repository.OrderRepository;
-// import lombok.RequiredArgsConstructor;
-// import org.kie.api.runtime.KieSession;
-// import org.springframework.stereotype.Service;
+import com.poc.droolspocv2.dto.OrderRequest;
+import com.poc.droolspocv2.dto.ValidationResult;
+import com.poc.droolspocv2.model.AccountValidationData;
+import com.poc.droolspocv2.model.DroolsTemplate;
+import com.poc.droolspocv2.model.Order;
+import com.poc.droolspocv2.repository.AccountValidationDataRepository;
+import com.poc.droolspocv2.repository.DroolsTemplateRepository;
+import com.poc.droolspocv2.repository.OrderRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-// import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Optional;
 
-// @Service
-// @RequiredArgsConstructor
-// public class OrderService {
+@Service
+@RequiredArgsConstructor
+@Slf4j
+public class OrderService {
 
-// private final KieSession kieSession;
-// private final OrderRepository orderRepository;
-// private final AccountValidationDataRepository accountRepo;
+    private final OrderRepository orderRepository;
+    private final AccountValidationDataRepository accountRepository;
+    private final DroolsTemplateRepository droolsRepository;
+    private final DroolsService droolsService;
 
-// public String placeOrder(OrderRequest request) {
-// ValidationResult validationResult = new ValidationResult();
+    private static final String VALIDATION_TYPE = "ORDER_PLACEMENT";
 
-// AccountValidationData input = AccountValidationData.builder()
-// .accountId(request.getAccountId())
-// .name(request.getName())
-// .age(request.getAge())
-// .dob(request.getDob())
-// .build();
+    @Transactional
+    public Order placeOrder(OrderRequest orderRequest) {
+        // Find customer data
+        Optional<AccountValidationData> customerOpt = accountRepository.findByAccountId(orderRequest.getAccountId());
+        if (customerOpt.isEmpty()) {
+            Order rejectedOrder = Order.builder()
+                    .accountId(orderRequest.getAccountId())
+                    .orderDate(LocalDateTime.now())
+                    .totalAmount(orderRequest.getTotalAmount())
+                    .status("REJECTED")
+                    .rejectionReason("Customer not found")
+                    .build();
+            return orderRepository.save(rejectedOrder);
+        }
 
-// kieSession.insert(input);
-// kieSession.setGlobal("validationResult", validationResult);
-// kieSession.insert(validationResult);
-// kieSession.fireAllRules();
+        // Find validation template
+        Optional<DroolsTemplate> templateOpt = droolsRepository.findByValidationType(VALIDATION_TYPE);
+        if (templateOpt.isEmpty()) {
+            Order rejectedOrder = Order.builder()
+                    .accountId(orderRequest.getAccountId())
+                    .orderDate(LocalDateTime.now())
+                    .totalAmount(orderRequest.getTotalAmount())
+                    .status("REJECTED")
+                    .rejectionReason("Validation rules not found")
+                    .build();
+            return orderRepository.save(rejectedOrder);
+        }
 
-// if (!validationResult.getMessages().isEmpty()) {
-// return "Validation failed: " + String.join(", ",
-// validationResult.getMessages());
-// }
+        // Validate customer
+        AccountValidationData customer = customerOpt.get();
+        DroolsTemplate template = templateOpt.get();
+        ValidationResult validationResult = droolsService.validateCustomer(customer, template.getDrlTemplate());
 
-// Order order = Order.builder()
-// .accountId(request.getAccountId())
-// .product(request.getProduct())
-// .quantity(request.getQuantity())
-// .orderDate(LocalDate.now())
-// .build();
+        // Create and save order with validation result
+        Order order = Order.builder()
+                .accountId(orderRequest.getAccountId())
+                .orderDate(LocalDateTime.now())
+                .totalAmount(orderRequest.getTotalAmount())
+                .status(validationResult.isValid() ? "VALIDATED" : "REJECTED")
+                .rejectionReason(validationResult.isValid() ? null : validationResult.getMessage())
+                .build();
 
-// orderRepository.save(order);
-// return "Order placed successfully";
-// }
-// }
+        return orderRepository.save(order);
+    }
+
+    public Order getOrder(Long id) {
+        return orderRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Order not found with id: " + id));
+    }
+}
