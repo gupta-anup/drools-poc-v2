@@ -1,0 +1,8 @@
+import com.poc.droolspocv2.dto.ValidationResult;
+
+rule "Default Rule"
+when
+    eval(true)
+then
+    System.out.println("Default rule executed");
+end
