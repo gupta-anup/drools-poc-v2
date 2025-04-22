@@ -5,13 +5,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderRequest {
-    private String accountId;
-    private BigDecimal totalAmount;
+public class ValidationResult {
+    private boolean valid;
+    private String message;
 }
