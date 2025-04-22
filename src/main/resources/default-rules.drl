@@ -1,5 +1,3 @@
-package rules;
-
 import com.poc.droolspocv2.dto.ValidationResult;
 
 rule "Default Rule"
