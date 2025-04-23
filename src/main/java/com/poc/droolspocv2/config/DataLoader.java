@@ -26,52 +26,53 @@ public class DataLoader {
             // Initialize sample Drools template
             if (droolsTemplateRepository.findByValidationType("ORDER_PLACEMENT").isEmpty()) {
                 String drlTemplate =
-                        "import com.poc.droolspocv2.dto.OrderRequest;\n" +
-                        "import com.poc.droolspocv2.model.AccountValidationData;\n" +
-                        "import com.poc.droolspocv2.dto.ValidationResult;\n\n" +
-
-                        "// Rule to validate that the customer data in the request matches the stored data\n" +
-                        "rule \"Customer Validation - Name Match\"\n" +
-                        "when\n" +
-                        "    $request : OrderRequest($requestName : name)\n" +
-                        "    $stored : AccountValidationData(accountId == $request.accountId, name != $requestName)\n" +
-                        "    $result : ValidationResult(valid == true)\n" +
-                        "then\n" +
-                        "    $result.setValid(false);\n" +
-                        "    $result.setMessage(\"Customer name in request does not match our records\");\n" +
-                        "end\n\n" +
-
-                        "// Rule to validate that the customer age in the request matches the stored age\n" +
-                        "rule \"Customer Validation - Age Match\"\n" +
-                        "when\n" +
-                        "    $request : OrderRequest($requestAge : age)\n" +
-                        "    $stored : AccountValidationData(accountId == $request.accountId, age != $requestAge)\n" +
-                        "    $result : ValidationResult(valid == true)\n" +
-                        "then\n" +
-                        "    $result.setValid(false);\n" +
-                        "    $result.setMessage(\"Customer age in request does not match our records\");\n" +
-                        "end\n\n" +
-
-                        "// Rule to validate that the customer DOB in the request matches the stored DOB\n" +
-                        "rule \"Customer Validation - DOB Match\"\n" +
-                        "when\n" +
-                        "    $request : OrderRequest($requestDob : dob)\n" +
-                        "    $stored : AccountValidationData(accountId == $request.accountId, dob != $requestDob)\n" +
-                        "    $result : ValidationResult(valid == true)\n" +
-                        "then\n" +
-                        "    $result.setValid(false);\n" +
-                        "    $result.setMessage(\"Customer date of birth in request does not match our records\");\n" +
-                        "end\n\n" +
-
-                        "// Rule to validate customer's age is at least 18\n" +
-                        "rule \"Customer Validation - Minimum Age\"\n" +
-                        "when\n" +
-                        "    $request : OrderRequest(age < 18)\n" +
-                        "    $result : ValidationResult(valid == true)\n" +
-                        "then\n" +
-                        "    $result.setValid(false);\n" +
-                        "    $result.setMessage(\"Customer must be at least 18 years old\");\n" +
-                        "end";
+                        """
+                                import com.poc.droolspocv2.dto.OrderRequest;
+                                import com.poc.droolspocv2.model.AccountValidationData;
+                                import com.poc.droolspocv2.dto.ValidationResult;
+                                
+                                // Rule to validate that the customer data in the request matches the stored data
+                                rule "Customer Validation - Name Match"
+                                when
+                                    $request : OrderRequest($requestName : name)
+                                    $stored : AccountValidationData(accountId == $request.accountId, name != $requestName)
+                                    $result : ValidationResult(valid == true)
+                                then
+                                    $result.setValid(false);
+                                    $result.setMessage("Customer name in request does not match our records");
+                                end
+                                
+                                // Rule to validate that the customer age in the request matches the stored age
+                                rule "Customer Validation - Age Match"
+                                when
+                                    $request : OrderRequest($requestAge : age)
+                                    $stored : AccountValidationData(accountId == $request.accountId, age != $requestAge)
+                                    $result : ValidationResult(valid == true)
+                                then
+                                    $result.setValid(false);
+                                    $result.setMessage("Customer age in request does not match our records");
+                                end
+                                
+                                // Rule to validate that the customer DOB in the request matches the stored DOB
+                                rule "Customer Validation - DOB Match"
+                                when
+                                    $request : OrderRequest($requestDob : dob)
+                                    $stored : AccountValidationData(accountId == $request.accountId, dob != $requestDob)
+                                    $result : ValidationResult(valid == true)
+                                then
+                                    $result.setValid(false);
+                                    $result.setMessage("Customer date of birth in request does not match our records");
+                                end
+                                
+                                // Rule to validate customer's age is at least 18
+                                rule "Customer Validation - Minimum Age"
+                                when
+                                    $request : OrderRequest(age < 18)
+                                    $result : ValidationResult(valid == true)
+                                then
+                                    $result.setValid(false);
+                                    $result.setMessage("Customer must be at least 18 years old");
+                                end""";
 
                 DroolsTemplate template = DroolsTemplate.builder()
                         .drlTemplate(drlTemplate)
