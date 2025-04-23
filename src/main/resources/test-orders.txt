@@ -1,0 +1,91 @@
+// Valid Order Request - Data matches stored customer data
+{
+  "accountId": "CUST001",
+  "totalAmount": 150.75,
+  "name": "John Doe",
+  "age": 25,
+  "dob": "1998-05-15"
+}
+
+// Invalid Order Request - Name mismatch
+{
+  "accountId": "CUST001",
+  "totalAmount": 89.99,
+  "name": "Johnny Doe",
+  "age": 25,
+  "dob": "1998-05-15"
+}
+
+// Invalid Order Request - Age mismatch
+{
+  "accountId": "CUST001",
+  "totalAmount": 199.50,
+  "name": "John Doe",
+  "age": 30,
+  "dob": "1998-05-15"
+}
+
+// Invalid Order Request - DOB mismatch
+{
+  "accountId": "CUST001",
+  "totalAmount": 50.25,
+  "name": "John Doe",
+  "age": 25,
+  "dob": "1995-08-20"
+}
+
+// Invalid Order Request - Underage customer
+{
+  "accountId": "CUST002",
+  "totalAmount": 45.00,
+  "name": "Young User",
+  "age": 16,
+  "dob": "2008-10-25"
+}
+
+// Invalid Order Request - Non-existent customer
+{
+  "accountId": "CUST999",
+  "totalAmount": 120.00,
+  "name": "Unknown User",
+  "age": 35,
+  "dob": "1989-03-10"
+}
+
+-- Insert additional test customers
+INSERT INTO account_validation_data (account_id, age, name, dob) 
+VALUES ('CUST002', 22, 'Jane Smith', '2002-09-18');
+
+INSERT INTO account_validation_data (account_id, age, name, dob) 
+VALUES ('CUST003', 35, 'Robert Johnson', '1989-12-05');
+
+INSERT INTO account_validation_data (account_id, age, name, dob) 
+VALUES ('CUST004', 17, 'Underage User', '2008-01-10');
+
+# Example curl command for placing an order
+curl -X POST http://localhost:8080/api/orders \
+  -H "Content-Type: application/json" \
+  -d '{
+    "accountId": "CUST001",
+    "totalAmount": 150.75,
+    "name": "John Doe",
+    "age": 25,
+    "dob": "1998-05-15"
+  }'
+
+# To check an order status
+curl -X GET http://localhost:8080/api/orders/1
+
+# Example curl command for placing an order
+curl -X POST http://localhost:8080/api/orders \
+  -H "Content-Type: application/json" \
+  -d '{
+    "accountId": "CUST001",
+    "totalAmount": 150.75,
+    "name": "John Doe",
+    "age": 25,
+    "dob": "1998-05-15"
+  }'
+
+# To check an order status
+curl -X GET http://localhost:8080/api/orders/1
